@@ -1,0 +1,12 @@
+<RCC>
+  <qresource prefix="calcRotation">
+    <file>RotationSmall.png</file>
+    <file>Rotation.png</file>
+  </qresource>
+  <qresource prefix="calcTilt">
+    <file>TiltSmall.png</file>
+  </qresource>
+  <qresource prefix="calcTip">
+    <file>TipSmall.png</file>
+  </qresource>
+</RCC>
