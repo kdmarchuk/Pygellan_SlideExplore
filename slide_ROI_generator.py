@@ -10,7 +10,6 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
 from mainGUI import MainView
-import createBridge
 
 
 class App(QApplication):
@@ -19,7 +18,7 @@ class App(QApplication):
         
         self.main_view = MainView()
         self.main_view.show()
-        createBridge.connectMagellan(self)
+
         
 if __name__ == '__main__':
     app = App(sys.argv)

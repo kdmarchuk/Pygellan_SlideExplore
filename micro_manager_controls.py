@@ -7,5 +7,8 @@ File to utilize micro manager in setting up ROI generator
 @author: Kyle
 """
 
+
+
 def snapTaggedImage(self):
-    
+    self.core.snapImage()
+    print(self.core.getExposure)
