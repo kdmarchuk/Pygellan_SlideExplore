@@ -8,6 +8,7 @@ Establishes connection with Micro-Manager and Micro Magellan on launch of progra
 """
 
 from pygellan.acquire import MagellanBridge
+
 class Connection():
     def __init__(self):
         self.bridge = MagellanBridge()

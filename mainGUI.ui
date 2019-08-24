@@ -38,7 +38,7 @@
     <property name="frameShadow">
      <enum>QFrame::Plain</enum>
     </property>
-    <widget class="QGraphicsView" name="rightImage_graphicsView">
+    <widget class="ImageView" name="rightImage_graphicsView">
      <property name="geometry">
       <rect>
        <x>800</x>
@@ -48,7 +48,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QGraphicsView" name="bottomImage_graphicsView">
+    <widget class="ImageView" name="bottomImage_graphicsView">
      <property name="geometry">
       <rect>
        <x>540</x>
@@ -58,7 +58,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QGraphicsView" name="leftImage_graphicsView">
+    <widget class="ImageView" name="leftImage_graphicsView">
      <property name="geometry">
       <rect>
        <x>280</x>
@@ -68,7 +68,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QGraphicsView" name="topImage_graphicsView">
+    <widget class="ImageView" name="topImage_graphicsView">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -87,8 +87,11 @@
        <height>31</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Top&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; color:#ff0000;&quot;&gt;Top&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
     <widget class="QLabel" name="leftImage_label">
@@ -101,7 +104,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Left&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; color:#00ff00;&quot;&gt;Left&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
     <widget class="QLabel" name="selectedSlide_label">
@@ -137,7 +140,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Bottom&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; color:#0000ff;&quot;&gt;Bottom&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
     <widget class="QLabel" name="rightImage_label">
@@ -150,7 +153,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Right&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; color:#ffff00;&quot;&gt;Right&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
     <widget class="QPushButton" name="snapTop_pushButton">
@@ -1278,6 +1281,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ImageView</class>
+   <extends>QGraphicsView</extends>
+   <header>pyqtgraph</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="GUI_Images.qrc"/>
  </resources>
