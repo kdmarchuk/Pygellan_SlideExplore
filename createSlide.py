@@ -39,6 +39,7 @@ for pos in wellPositions_pix:
   
 plt.figure(1)
 plt.imshow(slideArray,cmap='gray')
+
 ax = plt.gca()
 ax.get_xaxis().set_visible(False)
 ax.get_yaxis().set_visible(False)
@@ -51,7 +52,19 @@ ax.annotate('Well 6', xy=(0,0),fontsize = 8, color='b',xytext=(2850,1915),textco
 ax.annotate('Well 7', xy=(0,0),fontsize = 8, color='b',xytext=(4100,1915),textcoords='data')
 ax.annotate('Well 8', xy=(0,0),fontsize = 8, color='b',xytext=(5350,1915),textcoords='data')
 
+topPositions = np.array([[1700,45],[2950,45],[4200,45],[5450,45],[1700,1165],[2950,1165],[4200,1165],[5450,1165]])
+bottomPositions = np.array([[1700,985],[2950,985],[4200,985],[5450,985],[1700,2105],[2950,2105],[4200,2105],[5450,2105]])
+leftPositions = np.array([[1168,515],[2418,515],[3668,515],[4918,515],[1168,1635],[2418,1635],[3668,1635],[4918,1635]])
+rightPositions = np.array([[2232,515],[3482,515],[4732,515],[5982,515],[2232,1635],[3482,1635],[4732,1635],[5982,1635]])
 
-rect = patches.Rectangle((1900,715),42,32,linewidth=1,edgecolor='r',facecolor='none')
+rectRed = patches.Rectangle((topPositions[0][0],topPositions[0][1]),400,400,linewidth=1,edgecolor='r',facecolor='none')
+rectBlue = patches.Rectangle((bottomPositions[0][0],bottomPositions[0][1]),400,400,linewidth=1,edgecolor='b',facecolor='none')
+rectGreen = patches.Rectangle((leftPositions[0][0],leftPositions[0][1]),400,400,linewidth=1,edgecolor='g',facecolor='none')
+rectYellow = patches.Rectangle((rightPositions[0][0],rightPositions[0][1]),400,400,linewidth=1,edgecolor='y',facecolor='none')
 
-ax.add_patch(rect)
+ax.add_patch(rectRed)
+ax.add_patch(rectBlue)
+ax.add_patch(rectGreen)
+ax.add_patch(rectYellow)
+
+plt.show()

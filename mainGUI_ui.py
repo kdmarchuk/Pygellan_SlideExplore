@@ -43,7 +43,7 @@ class Ui_MainWindow(object):
         self.selectedSlide_label = QtWidgets.QLabel(self.setup_frame)
         self.selectedSlide_label.setGeometry(QtCore.QRect(250, 10, 151, 31))
         self.selectedSlide_label.setObjectName("selectedSlide_label")
-        self.selectedSlide_graphicsView = QtWidgets.QGraphicsView(self.setup_frame)
+        self.selectedSlide_graphicsView = ImageView(self.setup_frame)
         self.selectedSlide_graphicsView.setGeometry(QtCore.QRect(170, 50, 291, 91))
         self.selectedSlide_graphicsView.setObjectName("selectedSlide_graphicsView")
         self.bottomImage_label = QtWidgets.QLabel(self.setup_frame)
