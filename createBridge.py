@@ -19,4 +19,4 @@ class Connection():
         print('MicroMagellan Socket:')
         print(self.magellan.socket)
         self.channelGroup = self.core.getChannelGroup()
-        print(self.channelGroup)
+        #print(self.channelGroup)

@@ -17,9 +17,10 @@ import matplotlib.pyplot as plt
 import pyqtgraph as pg
 
 from mainGUI_ui import Ui_MainWindow
+from SlideROIs import ROIsMap
 
 import createBridge
-#import IBIDI_Slide
+import IBIDI_Slide
 
 
 class MainView(QMainWindow):
@@ -31,8 +32,6 @@ class MainView(QMainWindow):
         self._ui.setupUi(self)
 
         self.connx = createBridge.Connection()
-        #self.channelGroup = self.connx.core.getChannelGroup()
-        #print(self.channelGroup)
     
         ### Connections for Days
         # Select Slide Dropdown
@@ -57,7 +56,7 @@ class MainView(QMainWindow):
         self._ui.topImage_graphicsView.view.setAspectLocked()
         self._ui.topImage_graphicsView.view.invertX()
 
-        self.roiTop = pg.LineSegmentROI([[10, 128],[492,128]],maxBounds=QRectF(0,0,512,512),pen='r')
+        self.roiTop = pg.LineSegmentROI([[10, 256],[492,256]],pen='r')
         self._ui.topImage_graphicsView.view.addItem(self.roiTop)
         self.roiTop.sigRegionChangeFinished.connect(self.updateTop)
         # Bottom Image
@@ -67,7 +66,7 @@ class MainView(QMainWindow):
         self._ui.bottomImage_graphicsView.view.setAspectLocked()
         self._ui.bottomImage_graphicsView.view.invertX()
 
-        self.roiBottom = pg.LineSegmentROI([[10, 128],[492,128]],maxBounds=QRectF(0,0,512,512),pen='b')
+        self.roiBottom = pg.LineSegmentROI([[10, 256],[492,256]],pen='b')
         self._ui.bottomImage_graphicsView.view.addItem(self.roiBottom)
         self.roiBottom.sigRegionChangeFinished.connect(self.updateBottom)
         # Left Image
@@ -77,7 +76,7 @@ class MainView(QMainWindow):
         self._ui.leftImage_graphicsView.view.setAspectLocked()
         self._ui.leftImage_graphicsView.view.invertX()
 
-        self.roiLeft = pg.LineSegmentROI([[10, 128],[492,128]],maxBounds=QRectF(0,0,512,512),pen='g')
+        self.roiLeft = pg.LineSegmentROI([[256, 10],[256,492]],pen='g')
         self._ui.leftImage_graphicsView.view.addItem(self.roiLeft)
         self.roiLeft.sigRegionChangeFinished.connect(self.updateLeft)
         # right Image
@@ -87,87 +86,58 @@ class MainView(QMainWindow):
         self._ui.rightImage_graphicsView.view.setAspectLocked()
         self._ui.rightImage_graphicsView.view.invertX()
 
-        self.roiRight = pg.LineSegmentROI([[10, 128],[492,128]],maxBounds=QRectF(0,0,512,512),pen='y')
+        self.roiRight = pg.LineSegmentROI([[256,10],[256, 492]],pen='y')
         self._ui.rightImage_graphicsView.view.addItem(self.roiRight)
         self.roiRight.sigRegionChangeFinished.connect(self.updateRight)
 
         # Push Calculate Button
         self._ui.runCalc_pushButton.clicked.connect(self.pressRunCalc)
+
+        # Push Slide ROIs Button
+        self._ui.ROIMap_pushButton.clicked.connect(self.pressCreateROImap)
   
     def loadIBIDISlide(self):
-        #IBIDI_Slide.createIBIDI()
-        phys_to_img_conversion = 100
+        ## Load IBIDI 8 well slide
+        self.slide = IBIDI_Slide.createIBIDI()
+        # Pull the array from the class
+        self._ui.selectedSlide_graphicsView.view.addItem(self.slide.slideBase)
+        # Add text to visual wells 
+        ## TODO: (turn into a for loop for generalization)
+        self._ui.selectedSlide_graphicsView.view.addItem(self.slide.well1text)
+        self._ui.selectedSlide_graphicsView.view.addItem(self.slide.well2text)
+        self._ui.selectedSlide_graphicsView.view.addItem(self.slide.well3text)
+        self._ui.selectedSlide_graphicsView.view.addItem(self.slide.well4text)
+        self._ui.selectedSlide_graphicsView.view.addItem(self.slide.well5text)
+        self._ui.selectedSlide_graphicsView.view.addItem(self.slide.well6text) 
+        self._ui.selectedSlide_graphicsView.view.addItem(self.slide.well7text)
+        self._ui.selectedSlide_graphicsView.view.addItem(self.slide.well8text)
 
-        ### Slide Parameters ###
-        slideHeight_mm =  25.50
-        slideWidth_mm = 75.60
-        wellWidth_mm = 10.65
-        wellHeight_mm = 9.41
-        nWells = 8
-        wellPositions_mm = np.array([[7.15,19.0],[7.15,31.5],[7.15,44.0],[7.15,56.5],[18.35,19.0],[18.35,31.5],[18.35,44.1],[18.35,56.5]])
-
-        ### Image Conversion ###
-        slideHeight_pix = slideHeight_mm * phys_to_img_conversion
-        slideWidth_pix = slideWidth_mm * phys_to_img_conversion
-        wellHeight_pix = wellHeight_mm * phys_to_img_conversion
-        wellHeight_pix = int(wellHeight_pix)
-        wellWidth_pix = wellWidth_mm * phys_to_img_conversion
-        wellWidth_pix = int(wellWidth_pix)
-        wellPositions_pix = wellPositions_mm * phys_to_img_conversion
-        wellPositions_pix = wellPositions_pix.astype(int)
-
-        #### Create Slide Image ###
-        slideArray = np.zeros((np.int(np.round(slideHeight_pix)),np.int(np.round(slideWidth_pix))),dtype=int)
-        # Add Wells to Array
-        for pos in wellPositions_pix:
-            slideArray[pos[0]-int(wellHeight_pix/2):pos[0]+int(wellHeight_pix/2),pos[1]-int(wellWidth_pix/2):pos[1]+int(wellWidth_pix/2)] = 1
-        
-        #plt.figure(1)
-        #plt.imshow(slideArray,cmap='gray')
-        #plt.show()
-        slideArray = np.rot90(slideArray)
-        slideBase = pg.ImageItem(slideArray)
-        self._ui.selectedSlide_graphicsView.view.addItem(slideBase)
-        well1text = pg.TextItem(text='1',color='k')
-        well1text.setPos(1650,315)
-        self._ui.selectedSlide_graphicsView.view.addItem(well1text)
-        well2text = pg.TextItem(text='2',color='k')
-        well2text.setPos(2900,315)
-        self._ui.selectedSlide_graphicsView.view.addItem(well2text)
-        well3text = pg.TextItem(text='3',color='k')
-        well3text.setPos(4150,315)
-        self._ui.selectedSlide_graphicsView.view.addItem(well3text)
-        well4text = pg.TextItem(text='4',color='k')
-        well4text.setPos(5400,315)
-        self._ui.selectedSlide_graphicsView.view.addItem(well4text)
-        well5text = pg.TextItem(text='5',color='k')
-        well5text.setPos(1650,1515)
-        self._ui.selectedSlide_graphicsView.view.addItem(well5text)
-        well6text = pg.TextItem(text='6',color='k')
-        well6text.setPos(2900,1515)
-        self._ui.selectedSlide_graphicsView.view.addItem(well6text)
-        well7text = pg.TextItem(text='7',color='k')
-        well7text.setPos(4150,1515)
-        self._ui.selectedSlide_graphicsView.view.addItem(well7text)
-        well8text = pg.TextItem(text='8',color='k')
-        well8text.setPos(5400,1515)
-        self._ui.selectedSlide_graphicsView.view.addItem(well8text)
+        # Get center of well position for ROI calcs
+        self.wellCenters = self.slide.wellPositions_pix
+        print(self.wellCenters)
 
     def pressSnapTop(self):
+        # To remove previous graphics rectangle
         try:
             self._ui.selectedSlide_graphicsView.removeItem(self.topRect)
         except AttributeError:
-            self.topRect = "Initialized Value"
+            pass
 
         topWell = self._ui.topWell_spinBox.value()
-        topPositions = np.array([[1700,45],[2950,45],[4200,45],[5450,45],[1700,1165],[2950,1165],[4200,1165],[5450,1165]]) 
-        self.topRect = QGraphicsRectItem(topPositions[topWell-1][0],topPositions[topWell-1][1], 400,400) 
+        # To not crash if no slide is selected
+        try:
+            self.topRect = QGraphicsRectItem(self.slide.topPositions[topWell-1][0],self.slide.topPositions[topWell-1][1], 400,400) 
+        except AttributeError:
+            print("Select a slide first")
+            return
         self.topRect.setBrush(QColor("red"))
 
+        # Get xyz positions on Snap
         self.zPositionTop = self.connx.core.getPosition()
         self.xPositionTop = self.connx.core.getXPosition()
         self.yPositionTop = self.connx.core.getYPosition()  
-        self.connx.core.snapImage()      
+        self.connx.core.snapImage() 
+
         tagged_image = self.connx.core.getTaggedImage()
         pixels_flat = tagged_image[0]
         metadata = tagged_image[1]
@@ -181,19 +151,28 @@ class MainView(QMainWindow):
         print('T')
 
     def pressSnapBottom(self):
+        # To remove previous graphics rectangle
         try:
             self._ui.selectedSlide_graphicsView.removeItem(self.bottomRect)
         except AttributeError:
-            self.bottomRect = "Initialized Value"
-        bottomWell = self._ui.bottomWell_spinBox.value()
-        bottomPositions = np.array([[1700,985],[2950,985],[4200,985],[5450,985],[1700,2105],[2950,2105],[4200,2105],[5450,2105]])
-        self.bottomRect = QGraphicsRectItem(bottomPositions[bottomWell-1][0],bottomPositions[bottomWell-1][1], 400,400) 
-        self.bottomRect.setBrush(QColor("blue"))
+            pass
 
+        bottomWell = self._ui.bottomWell_spinBox.value()
+
+        # To not crash if no slide is selected
+        try:
+            self.bottomRect = QGraphicsRectItem(self.slide.bottomPositions[bottomWell-1][0],self.slide.bottomPositions[bottomWell-1][1], 400,400) 
+        except AttributeError:
+            print("Select a slide first")
+            return
+        self.bottomRect.setBrush(QColor("blue"))
+        
+        # Get xyz positions on Snap
         self.zPositionBottom = self.connx.core.getPosition() 
         self.xPositionBottom = self.connx.core.getXPosition()
         self.yPositionBottom = self.connx.core.getYPosition() 
         self.connx.core.snapImage()
+
         tagged_image = self.connx.core.getTaggedImage()
         pixels_flat = tagged_image[0]
         metadata = tagged_image[1]
@@ -207,19 +186,28 @@ class MainView(QMainWindow):
         print('B')
 
     def pressSnapLeft(self):
+        # To remove previous graphics rectangle
         try:
             self._ui.selectedSlide_graphicsView.removeItem(self.leftRect)
         except AttributeError:
-            self.leftRect = "Initialized Value"
+            pass
+
         leftWell = self._ui.leftWell_spinBox.value()
-        leftPositions = np.array([[1168,515],[2418,515],[3668,515],[4918,515],[1168,1635],[2418,1635],[3668,1635],[4918,1635]])
-        self.leftRect = QGraphicsRectItem(leftPositions[leftWell-1][0],leftPositions[leftWell-1][1], 400,400) 
+
+        # To not crash if no slide is selected
+        try:
+            self.leftRect = QGraphicsRectItem(self.slide.leftPositions[leftWell-1][0],self.slide.leftPositions[leftWell-1][1], 400,400) 
+        except AttributeError:
+            print("Select a slide first")
+            return
         self.leftRect.setBrush(QColor("green"))
 
+        # Get xyz positions on Snap
         self.zPositionLeft = self.connx.core.getPosition()
         self.xPositionLeft = self.connx.core.getXPosition()
         self.yPositionLeft = self.connx.core.getYPosition()  
         self.connx.core.snapImage()
+
         tagged_image = self.connx.core.getTaggedImage()
         pixels_flat = tagged_image[0]
         metadata = tagged_image[1]
@@ -233,19 +221,29 @@ class MainView(QMainWindow):
         print('L')
 
     def pressSnapRight(self):
+        # To remove previous graphics rectangle
         try:
             self._ui.selectedSlide_graphicsView.removeItem(self.rightRect)
         except AttributeError:
-            self.rightRect = "Initialized Value"
+            pass
+
         rightWell = self._ui.rightWell_spinBox.value()
-        rightPositions = np.array([[2232,515],[3482,515],[4732,515],[5982,515],[2232,1635],[3482,1635],[4732,1635],[5982,1635]])
-        self.rightRect = QGraphicsRectItem(rightPositions[rightWell-1][0],rightPositions[rightWell-1][1], 400,400) 
+
+        # To not crash if no slide is selected
+        try:
+            self.rightRect = QGraphicsRectItem(self.slide.rightPositions[rightWell-1][0],self.slide.rightPositions[rightWell-1][1], 400,400)
+        except AttributeError:
+            print("Select a slide first")
+            return
+
         self.rightRect.setBrush(QColor("yellow"))
 
+        # Get xyz positions on Snap
         self.zPositionRight = self.connx.core.getPosition()
         self.xPositionRight = self.connx.core.getXPosition()
         self.yPositionRight = self.connx.core.getYPosition()  
         self.connx.core.snapImage()
+
         tagged_image = self.connx.core.getTaggedImage()
         pixels_flat = tagged_image[0]
         metadata = tagged_image[1]
@@ -260,41 +258,113 @@ class MainView(QMainWindow):
 
     def updateTop(self):
         self.boxDataTop = self.roiTop.getArraySlice(self.pixelsTop,self.pixels_imageTop,axes=(0,1))
-        print('Top Box')
-        print(self.boxDataTop)
-        
+        #print('Top Box')
+        #print(self.boxDataTop)
+     
     def updateBottom(self):
         self.boxDataBottom = self.roiBottom.getArraySlice(self.pixelsBottom,self.pixels_imageBottom,axes=(0,1))
-        print('Bottom Box')
-        print(self.boxDataBottom)
+        #print('Bottom Box')
+        #print(self.boxDataBottom)
 
     def updateLeft(self):
+        self.boxDataLeft = self.roiLeft.getArraySlice(self.pixelsLeft,self.pixels_imageLeft,axes=(0,1))
+        #print('Left Box')
+        #print(self.boxDataLeft)
+
+    def updateRight(self):
+        self.boxDataRight = self.roiRight.getArraySlice(self.pixelsRight,self.pixels_imageRight,axes=(0,1))
+        #print('Right Box')
+        #print(self.boxDataRight)
+
+    def pressRunCalc(self):
+        self.pixelSize = self.connx.core.getPixelSizeUm()
+
+        boxDataTop = self.roiTop.getArraySlice(self.pixelsTop,self.pixels_imageTop,axes=(0,1))
+        print('Top Box')
+        sliceTopX = boxDataTop[0][0]
+        sliceTopY = boxDataTop[0][1]
+        self.sliceTopXstart = sliceTopX.start
+        self.sliceTopXstop = sliceTopX.stop
+        self.sliceTopYstart = sliceTopY.start
+        self.sliceTopYstop = sliceTopY.stop
+
+        boxDataBottom = self.roiBottom.getArraySlice(self.pixelsBottom,self.pixels_imageBottom,axes=(0,1))
+        print('Bottom Box')
+        sliceBottomX = boxDataBottom[0][0]
+        sliceBottomY = boxDataBottom[0][1]
+        self.sliceBottomXstart = sliceBottomX.start
+        self.sliceBottomXstop = sliceBottomX.stop
+        self.sliceBottomYstart = sliceBottomY.start
+        self.sliceBottomYstop = sliceBottomY.stop
+        
+
         self.boxDataLeft = self.roiLeft.getArraySlice(self.pixelsLeft,self.pixels_imageLeft,axes=(0,1))
         print('Left Box')
         print(self.boxDataLeft)
 
-    def updateRight(self):
         self.boxDataRight = self.roiRight.getArraySlice(self.pixelsRight,self.pixels_imageRight,axes=(0,1))
         print('Right Box')
         print(self.boxDataRight)
-
-    def pressRunCalc(self):
-
-        ## Change to Tip!!!
-        tiltDistance = self.xPositionLeft - self.xPositionRight
-        print(tiltDistance)
-        tiltHeight = self.zPositionLeft - self.zPositionRight
-        print(tiltHeight)
-        tiltRad = np.arctan(tiltHeight/tiltDistance)
-        print(tiltRad)
-        tiltDeg = np.degrees(tiltRad)
-        print(tiltDeg)
-
+        
+        ## Tip
+        tipDistance = self.xPositionLeft - self.xPositionRight
+        tipHeight = self.zPositionLeft - self.zPositionRight
+        tipRad = np.arctan(tipHeight/tipDistance)
+        tipDeg = np.degrees(tipRad)
+        tipDeg = round(tipDeg,2)
+        tipDegString = str(tipDeg) + u"\u00B0 Tip"
         # If tiltHeight is negative, tilt is positive and vice versa
 
+        ## Tilt
+        tiltDistance = self.yPositionTop - self.yPositionBottom
+        tiltHeight = self.zPositionTop - self.zPositionBottom
+        tiltRad = np.arctan(tiltHeight/tiltDistance)
+        tiltDeg = np.degrees(tiltRad)
+        tiltDeg = round(tiltDeg,2)
+        tiltDegString = str(tiltDeg) + u"\u00B0 Tilt"
 
-        self._ui.calcRot_label.setText(_translate("MainWindow", "42 Degrees"))
-        self._ui.calcTilt_label.setText(_translate("MainWindow","0.2 Degrees"))
-        self._ui.calcTip_label_3.setText(_translate("MainWindow","90 Degrees"))
+        ## Rotation
+        rotDistance = (self.sliceTopXstart - self.sliceTopXstop) * self.pixelSize
+        rotHeight = (self.sliceTopYstart - self.sliceTopYstop) * self.pixelSize
+        rotRad = np.arctan(rotHeight/rotDistance)
+        rotDeg = np.degrees(rotRad)
+        rotDeg = round(rotDeg,2)
+        rotDegString = str(rotDeg) + u"\u00B0 Rot"
+
+        # Updates the display strings on the GUI
+        self._ui.calcRot_label.setText(_translate("MainWindow", rotDegString))
+        self._ui.calcTilt_label.setText(_translate("MainWindow",tiltDegString))
+        self._ui.calcTip_label_3.setText(_translate("MainWindow",tipDegString))
+
+        self.calcSlideTop()
+        self.calcSlideBottom()
+
+
+    def calcSlideTop(self):
+        self.stagePosTop = self.yPositionTop + (self.sliceTopYstart * self.pixelSize)
+        print('Measured Top Pos')
+        print(self.stagePosTop)
+
+    def calcSlideBottom(self):
+        self.stagePosBottom = self.yPositionBottom + (self.sliceBottomYstart * self.pixelSize)
+        print('Measured Bottom Pos')
+        print(self.stagePosBottom)
+
+        slideH = self.slide.slideDictPix.get("slideHeight")
+        wellCtCVert = self.slide.slideDictPix.get("wellCtCVert")
+        nRows = self.slide.slideDictPix.get("numRows")
+
+        self.stagePosBottomCalc = self.stagePosTop + ((((nRows - 1) * wellCtCVert) + slideH) * self.pixelSize)
+        print(['Calc Bottom Pos'])
+        print(self.stagePosBottomCalc)
+
+
+
+
+    def pressCreateROImap(self):
+        self._ROIs_map = ROIsMap(self.slide)
+        self._ROIs_map.show()
+
+
 
         

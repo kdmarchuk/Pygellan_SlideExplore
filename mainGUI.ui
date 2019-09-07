@@ -1243,7 +1243,7 @@
      <property name="geometry">
       <rect>
        <x>900</x>
-       <y>100</y>
+       <y>190</y>
        <width>141</width>
        <height>101</height>
       </rect>
@@ -1253,6 +1253,22 @@
      </property>
      <property name="text">
       <string>Push To MicroMagellan</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="ROIMap_pushButton">
+     <property name="geometry">
+      <rect>
+       <x>900</x>
+       <y>40</y>
+       <width>141</width>
+       <height>101</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="text">
+      <string>Create ROI Map</string>
      </property>
     </widget>
    </widget>
